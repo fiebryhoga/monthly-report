@@ -35,7 +35,7 @@ export default function Navbar({ user, header, onToggleSidebar }) {
                     
                     <div className="text-right hidden sm:block leading-tight">
                         <div className="text-sm font-bold text-gray-800">{user.name}</div>
-                        <div className="text-xs text-gray-500 font-mono tracking-wide">{user.nip || 'Administrator'}</div>
+                        <div className="text-xs text-gray-500 tracking-wide">{user.nip || 'Administrator'}</div>
                     </div>
 
                     
