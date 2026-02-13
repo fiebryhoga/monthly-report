@@ -14,16 +14,10 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $user = Auth::user();
-
-        
-        
-        
+        $user = Auth::user();        
         if ($user->role === 'employee') {
             $currentMonth = Carbon::now()->month;
             $currentYear = Carbon::now()->year;
-
-            
             $stats = [
                 'present' => Attendance::where('user_id', $user->id)
                     ->whereMonth('date', $currentMonth)
@@ -49,12 +43,10 @@ class DashboardController extends Controller
                     ->where('status', 'alpha')
                     ->count(),
             ];
-
             
             $todayLog = Attendance::where('user_id', $user->id)
                 ->whereDate('date', Carbon::today())
                 ->first();
-
             
             $recentLogs = Attendance::where('user_id', $user->id)
                 ->whereDate('date', '!=', Carbon::today())
@@ -70,26 +62,16 @@ class DashboardController extends Controller
                 'current_date' => Carbon::now()->translatedFormat('l, d F Y')
             ]);
         }
-
-        
-        
-        
-        
         $today = Carbon::today();
-        
-        
         $stats = [
             'total_employees' => User::where('role', 'employee')->count(),
             'present_today'   => Attendance::whereDate('date', $today)->whereIn('status', ['present', 'late'])->count(),
             'late_today'      => Attendance::whereDate('date', $today)->where('status', 'late')->count(),
             'on_leave'        => Attendance::whereDate('date', $today)->whereIn('status', ['sick', 'permit'])->count(),
         ];
-
-        
         $dates = collect(range(6, 0))->map(function($days) {
             return Carbon::today()->subDays($days)->format('Y-m-d');
         });
-        
         $chartTrend = [
             'labels' => $dates->map(function($d) {
                 return Carbon::parse($d)->format('d M');
@@ -98,8 +80,6 @@ class DashboardController extends Controller
                 return Attendance::whereDate('date', $date)->whereIn('status', ['present', 'late'])->count();
             })
         ];
-
-        
         $chartStatus = [
             'present' => Attendance::whereDate('date', $today)->where('status', 'present')->count(),
             'late'    => Attendance::whereDate('date', $today)->where('status', 'late')->count(),
@@ -108,10 +88,8 @@ class DashboardController extends Controller
             'alpha'   => Attendance::whereDate('date', $today)->where('status', 'alpha')->count(),
         ];
 
-        
         $days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-        $radarLabels = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
-        
+        $radarLabels = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];        
         $presentData = [];
         $lateData = [];
         $checkDate = Carbon::now()->subDays(30);
@@ -148,14 +126,11 @@ class DashboardController extends Controller
             ]
         ];
 
-        
         $recentActivity = Attendance::with('user')
             ->whereDate('date', $today)
             ->orderBy('updated_at', 'desc')
             ->take(5)
             ->get();
-
-        
         
         return Inertia::render('Admin/Dashboard', [
             'stats' => $stats,

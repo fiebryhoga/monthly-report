@@ -2,7 +2,6 @@ import StatusBadge from './StatusBadge';
 
 export default function AttendanceTable({ employees }) {
     
-    // Helper format jam
     const formatTime = (time) => {
         if (!time || time === '-') return <span className="text-gray-300 font-mono text-xs">--:--</span>;
         return String(time).substring(0, 5);

@@ -22,30 +22,17 @@ class AttendanceSeeder extends Seeder
             $this->command->info('Tidak ada user dengan role employee. Pastikan EmployeeSeeder sudah dijalankan.');
             return;
         }
-
-        
-        
         $start = Carbon::create(2026, 1, 1); 
         $end   = Carbon::create(2026, 2, 28); 
-        
         $period = CarbonPeriod::create($start, $end);
-
         foreach ($employees as $employee) {
             foreach ($period as $date) {
-                
                 if ($date->isWeekend()) continue;
-
-                
                 $exists = Attendance::where('user_id', $employee->id)
                     ->whereDate('date', $date)
                     ->exists();
-                
                 if ($exists) continue;
-
-                
-                
                 $chance = rand(1, 100);
-
                 if ($chance <= 75) {
                     $this->createPresent($employee, $date, false); 
                 } elseif ($chance <= 85) {
@@ -67,20 +54,15 @@ class AttendanceSeeder extends Seeder
     private function createPresent($user, $date, $isLate)
     {
         $officeStart = Carbon::parse('08:00:00');
-        
         if ($isLate) {
-            
             $lateMinutes = rand(1, 45);
             $timeIn = $officeStart->copy()->addMinutes($lateMinutes);
             $status = 'late';
         } else {
-            
             $lateMinutes = 0;
             $timeIn = $officeStart->copy()->subMinutes(rand(5, 30));
             $status = 'present';
         }
-
-        
         $timeOut = Carbon::parse('17:00:00')->addMinutes(rand(0, 90));
 
         Attendance::create([
@@ -104,7 +86,7 @@ class AttendanceSeeder extends Seeder
             'sick' => ['Demam', 'Flu', 'Radang Tenggorokan', 'Sakit Kepala', 'Check-up'],
             'permit' => ['Urusan Keluarga', 'Ban Bocor', 'Perpanjang SIM', 'Pindahan', 'Anak Sakit']
         ];
-
+        
         Attendance::create([
             'user_id' => $user->id,
             'date' => $date->format('Y-m-d'),

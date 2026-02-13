@@ -196,20 +196,29 @@ class AttendanceController extends Controller
             $status = 'present';
             $lateMinutes = 0;
 
-            if ($config) {
-                $officeStart = Carbon::parse($config->office_start_time);
-                $officeEnd = Carbon::parse($config->office_end_time);
+
+        if ($config) {
+            
+            $officeStart = Carbon::parse($config->office_start_time)->setDateFrom($today);
+            $officeEnd = Carbon::parse($config->office_end_time)->setDateFrom($today);
+            
+            
+            if ($now->greaterThan($officeEnd)) return back()->with('error', 'Presensi ditutup!');
+            $openTime = $officeStart->copy()->subHour();
+            if ($now->lessThan($openTime)) return back()->with('error', 'Presensi belum dibuka.');
+            
+            
+            $lateThreshold = $officeStart->copy()->addMinutes($config->late_tolerance_minutes);
+
+            
+            if ($now->greaterThan($lateThreshold)) {
+                $status = 'late';
                 
-                if ($now->greaterThan($officeEnd)) return back()->with('error', 'Presensi ditutup!');
-                $openTime = $officeStart->copy()->subHour();
-                if ($now->lessThan($openTime)) return back()->with('error', 'Presensi belum dibuka.');
                 
-                $lateThreshold = $officeStart->copy()->addMinutes($config->late_tolerance_minutes);
-                if ($now->greaterThan($lateThreshold)) {
-                    $status = 'late';
-                    $lateMinutes = $now->diffInMinutes($lateThreshold);
-                }
+                
+                $lateMinutes = abs($now->diffInMinutes($officeStart)); 
             }
+        }
 
             Attendance::create([
                 'user_id' => $user->id,

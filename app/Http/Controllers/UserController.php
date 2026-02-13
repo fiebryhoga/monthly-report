@@ -16,7 +16,6 @@ class UserController extends Controller
         if (auth()->user()->role !== 'admin') {
             abort(403, 'Akses ditolak.');
         }
-
         return Inertia::render('Admin/Users/Index', [
             'users' => User::orderBy('name')->get() 
         ]);
@@ -57,21 +56,16 @@ class UserController extends Controller
             'position' => 'required|string',
             'department' => 'required|string',
         ]);
-
         $data = $request->except(['password']);
-        
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
         }
-
         $user->update($data);
-
         return redirect()->back()->with('success', 'Data pegawai berhasil diperbarui.');
     }
 
     public function show(User $user)
     {
-        
         $history = $user->attendances()
             ->orderBy('date', 'desc')
             ->get()
@@ -87,22 +81,17 @@ class UserController extends Controller
                     'status' => strtolower($log->status), 
                     'note' => $log->note ?? '-',
                 ];
-            });
-
-        
+            });   
         $currentMonth = Carbon::now()->month;
         $currentYear = Carbon::now()->year;
-
         $queryBulanIni = $user->attendances()
             ->whereMonth('date', $currentMonth)
             ->whereYear('date', $currentYear);
-
         $stats = [
             'present' => (clone $queryBulanIni)->where('status', 'present')->count(),
             'late' => (clone $queryBulanIni)->where('status', 'late')->count(),
             'absent' => (clone $queryBulanIni)->whereIn('status', ['sick', 'permit', 'alpha'])->count(),
         ];
-
         return Inertia::render('Admin/Users/Show', [
             'user' => $user,
             'history' => $history,
@@ -122,17 +111,13 @@ class UserController extends Controller
     public function switchRole(User $user)
     {
         $newRole = $user->role === 'admin' ? 'employee' : 'admin';
-
         if ($user->role === 'admin' && User::where('role', 'admin')->count() <= 1) {
             return redirect()->back()->with('error', 'Sistem harus menyisakan minimal 1 Admin.');
         }
-
         $user->update(['role' => $newRole]);
-
         $message = $newRole === 'admin' 
             ? "Pegawai $user->name berhasil diangkat menjadi Admin." 
             : "Admin $user->name berhasil diturunkan menjadi Pegawai.";
-
         return redirect()->back()->with('success', $message);
     }
 }

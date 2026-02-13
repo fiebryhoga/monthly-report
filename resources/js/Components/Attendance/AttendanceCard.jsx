@@ -1,13 +1,8 @@
 import { useForm } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 import { 
-    FiMapPin, 
-    FiRefreshCw, 
-    FiClock, 
-    FiCalendar, 
-    FiCheckCircle, 
-    FiFileText, 
-    FiAlertTriangle 
+    FiMapPin, FiRefreshCw, FiClock, FiCalendar, 
+    FiCheckCircle, FiFileText, FiAlertTriangle 
 } from 'react-icons/fi';
 
 export default function AttendanceCard({ today_log, office_config, holiday_info, pending_leave, onOpenLeaveModal }) {
@@ -28,17 +23,9 @@ export default function AttendanceCard({ today_log, office_config, holiday_info,
     
     const formatDuration = (minutes) => {
         if (!minutes || minutes <= 0) return '0 Menit';
-        
         const hrs = Math.floor(minutes / 60);
         const mins = minutes % 60;
-        
-        
-        if (hrs > 0) {
-            return `${hrs} Jam${mins > 0 ? ` ${mins} Menit` : ''}`;
-        }
-        
-        
-        return `${mins} Menit`;
+        return hrs > 0 ? `${hrs} Jam ${mins} Menit` : `${mins} Menit`;
     };
 
     
@@ -58,7 +45,9 @@ export default function AttendanceCard({ today_log, office_config, holiday_info,
 
     
     const getLocation = () => {
+        
         if (isHoliday || pending_leave) return;
+
         setIsLoadingLoc(true);
         setLocationError(null);
 
@@ -81,7 +70,7 @@ export default function AttendanceCard({ today_log, office_config, holiday_info,
                 setIsLoadingLoc(false);
             },
             (err) => {
-                setLocationError("Gagal mengambil lokasi. Aktifkan GPS.");
+                setLocationError("Gagal mengambil lokasi. Pastikan GPS aktif.");
                 setIsLoadingLoc(false);
             },
             { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
@@ -108,41 +97,6 @@ export default function AttendanceCard({ today_log, office_config, holiday_info,
     };
 
     
-    let btnText = "Absen Masuk";
-    let btnSub = "Mulai jam kerja";
-    let btnColor = "bg-gradient-to-r from-[#064d54] to-[#0d97a4]";
-    let isDisabled = false;
-
-    let currentStatus = { label: 'BELUM HADIR (ALPHA)', color: 'bg-red-50 text-red-600 border-red-200' };
-
-    if (today_log) {
-        if (today_log.status === 'sick') 
-            currentStatus = { label: 'SAKIT', color: 'bg-blue-50 text-blue-600 border-blue-200' };
-        else if (today_log.status === 'permit') 
-            currentStatus = { label: 'IZIN', color: 'bg-indigo-50 text-indigo-600 border-indigo-200' };
-        else if (today_log.status === 'late') 
-            
-            currentStatus = { label: `TERLAMBAT (${formatDuration(today_log.late_minutes)})`, color: 'bg-amber-50 text-amber-700 border-amber-200' };
-        else 
-            currentStatus = { label: 'HADIR (TEPAT WAKTU)', color: 'bg-green-50 text-green-700 border-green-200' };
-
-        if (!today_log.time_out) {
-            btnText = "Absen Pulang"; 
-            btnSub = "Selesaikan hari kerja"; 
-            btnColor = "bg-gradient-to-r from-[#d4af37] to-[#e6c256] text-white";
-        } else {
-            btnText = "Presensi Selesai"; 
-            btnSub = "Sampai jumpa besok!"; 
-            btnColor = "bg-gray-200 text-gray-400 cursor-not-allowed"; 
-            isDisabled = true;
-        }
-    } else {
-        if (!userLocation && !isDisabled && !isHoliday && !pending_leave) {
-            isDisabled = true; 
-            btnText = "Mencari Lokasi..."; 
-            btnColor = "bg-gray-100 text-gray-400 cursor-wait";
-        }
-    }
 
     
     if (pending_leave) {
@@ -155,8 +109,11 @@ export default function AttendanceCard({ today_log, office_config, holiday_info,
                 <h3 className="text-gray-400 font-bold text-xs uppercase tracking-widest mb-2">Status Presensi</h3>
                 <h2 className="text-2xl font-black text-amber-600 mb-2">Menunggu Persetujuan</h2>
                 <p className="text-gray-600 text-sm px-4">
-                    Pengajuan <strong>{pending_leave.type === 'sick' ? 'Sakit' : 'Izin'}</strong> sedang diproses admin.
+                    Pengajuan <strong>{pending_leave.type === 'sick' ? 'Sakit' : 'Izin'}</strong> Anda sedang diproses oleh Admin.
                 </p>
+                <div className="mt-4 text-xs text-amber-600/70 font-mono bg-amber-50 inline-block px-3 py-1 rounded-lg">
+                    Mohon tunggu konfirmasi.
+                </div>
             </div>
         );
     }
@@ -190,15 +147,54 @@ export default function AttendanceCard({ today_log, office_config, holiday_info,
                 <div className="w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
                     <FiCheckCircle className="w-10 h-10" />
                 </div>
+                <h3 className="text-gray-400 font-bold text-xs uppercase tracking-widest mb-2">Status Presensi</h3>
                 <h2 className="text-2xl font-black text-blue-700 mb-2">Pengajuan Disetujui</h2>
                 <p className="text-gray-600 text-sm">
                     Anda tercatat <strong>{today_log.status === 'sick' ? 'SAKIT' : 'IZIN'}</strong> hari ini.
                 </p>
+                {today_log.note && (
+                    <p className="mt-2 text-xs text-gray-400 italic">"{today_log.note}"</p>
+                )}
             </div>
         );
     }
 
     
+    
+    
+    let btnText = "Absen Masuk";
+    let btnSub = "Mulai jam kerja";
+    let btnColor = "bg-gradient-to-r from-[#064d54] to-[#0d97a4]";
+    let isDisabled = false;
+    let currentStatus = { label: 'BELUM HADIR', color: 'bg-gray-100 text-gray-500 border-gray-200' };
+
+    if (today_log) {
+        
+        if (today_log.status === 'late') {
+            currentStatus = { label: `TERLAMBAT (${formatDuration(today_log.late_minutes)})`, color: 'bg-amber-50 text-amber-700 border-amber-200' };
+        } else {
+            currentStatus = { label: 'HADIR (TEPAT WAKTU)', color: 'bg-green-50 text-green-700 border-green-200' };
+        }
+
+        if (!today_log.time_out) {
+            btnText = "Absen Pulang"; 
+            btnSub = "Selesaikan hari kerja"; 
+            btnColor = "bg-gradient-to-r from-[#d4af37] to-[#e6c256] text-white";
+        } else {
+            btnText = "Presensi Selesai"; 
+            btnSub = "Sampai jumpa besok!"; 
+            btnColor = "bg-gray-200 text-gray-400 cursor-not-allowed"; 
+            isDisabled = true;
+        }
+    } else {
+        
+        if (!userLocation && !isDisabled) {
+            isDisabled = true; 
+            btnText = "Mencari Lokasi..."; 
+            btnColor = "bg-gray-100 text-gray-400 cursor-wait";
+        }
+    }
+
     return (
         <div className="space-y-6">
             <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden relative transition-all hover:shadow-2xl">
@@ -266,6 +262,7 @@ export default function AttendanceCard({ today_log, office_config, holiday_info,
                         </div>
                     </div>
 
+                    
                     <button 
                         onClick={handleSubmit} 
                         disabled={isDisabled || processing} 

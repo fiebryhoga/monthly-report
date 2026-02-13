@@ -13,11 +13,9 @@ class LeaveRequestController extends Controller
     public function index()
     {
         $user = Auth::user();
-        
         $leaves = LeaveRequest::where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
             ->get();
-
         return Inertia::render('Employee/Leave/Index', [
             'leaves' => $leaves
         ]);
@@ -40,16 +38,12 @@ class LeaveRequestController extends Controller
         $data = $request->all();
         $data['user_id'] = Auth::id();
         $data['status'] = 'pending'; 
-
-        
         if ($request->hasFile('attachment')) {
             
             $path = $request->file('attachment')->store('leaves', 'public');
             $data['attachment'] = $path;
         }
-
         LeaveRequest::create($data);
-
         return back()->with('success', 'Pengajuan berhasil dikirim. Menunggu persetujuan Admin.');
     }
 }

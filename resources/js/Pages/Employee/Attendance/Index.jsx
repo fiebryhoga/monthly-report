@@ -26,14 +26,15 @@ export default function MyAttendance({ auth, history, today_log, office_config, 
 
             <div className="py-6">
                 
+                
                 {flash.success && (
-                    <div className="mb-6 bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-r-lg shadow-sm font-bold animate-in fade-in slide-in-from-top-2">
-                        {flash.success}
+                    <div className="mb-6 bg-green-50 border-l-4 border-green-500 text-green-700 p-4 rounded-r-lg shadow-sm font-bold flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
+                        <span>✅</span> {flash.success}
                     </div>
                 )}
                 {flash.error && (
-                    <div className="mb-6 bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-r-lg shadow-sm font-bold animate-in fade-in slide-in-from-top-2">
-                        {flash.error}
+                    <div className="mb-6 bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-r-lg shadow-sm font-bold flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
+                        <span>⚠️</span> {flash.error}
                     </div>
                 )}
 
@@ -45,7 +46,7 @@ export default function MyAttendance({ auth, history, today_log, office_config, 
                             today_log={today_log}
                             office_config={office_config}
                             holiday_info={holiday_info}
-                            pending_leave={pending_leave}
+                            pending_leave={pending_leave} 
                             onOpenLeaveModal={() => setShowLeaveModal(true)}
                         />
                     </div>

@@ -10,7 +10,7 @@ class AdminSeeder extends Seeder
 {
     public function run(): void
     {
-        // Dummy Admin 1
+        
         User::create([
             'nip' => 'ADM001',
                 'name' => 'Fiebry Prayhoga',
@@ -24,7 +24,7 @@ class AdminSeeder extends Seeder
                 'updated_at' => now(),
         ]);
 
-        // Dummy Admin 2
+        
         User::create([
             'nip' => 'ADM002',
             'name' => 'Sarah Savian',
@@ -38,7 +38,7 @@ class AdminSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // Dummy Admin 3
+        
         User::create([
             'nip' => 'ADM003',
             'name' => 'Budi Operasional',

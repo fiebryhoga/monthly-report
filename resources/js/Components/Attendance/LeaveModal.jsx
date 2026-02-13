@@ -69,14 +69,10 @@ export default function LeaveModal({ show, onClose }) {
                     </button>
                 </div>
                 
-                
                 <form onSubmit={handleSubmit} className="p-6 space-y-6 overflow-y-auto max-h-[80vh] bg-gray-50/50">
-                    
-                    
                     <div>
                         <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Jenis Pengajuan</label>
                         <div className="grid grid-cols-2 gap-4">
-                            
                             <div 
                                 onClick={() => setData('type', 'permit')}
                                 className={`cursor-pointer relative p-4 rounded-xl border-2 flex flex-col items-center gap-3 transition-all duration-200 ${
@@ -92,7 +88,6 @@ export default function LeaveModal({ show, onClose }) {
                                 <span className={`font-bold text-sm ${data.type === 'permit' ? 'text-[#064d54]' : 'text-gray-500'}`}>Izin / Cuti</span>
                             </div>
 
-                            
                             <div 
                                 onClick={() => setData('type', 'sick')}
                                 className={`cursor-pointer relative p-4 rounded-xl border-2 flex flex-col items-center gap-3 transition-all duration-200 ${

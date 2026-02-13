@@ -17,9 +17,7 @@ class ConfigController extends Controller
         }
 
         return Inertia::render('Admin/Config/Index', [
-            
-            'config' => AttendanceConfig::first() ?? new AttendanceConfig(),
-            
+            'config' => AttendanceConfig::first() ?? new AttendanceConfig(),            
             'holidays' => Holiday::orderBy('date', 'desc')->get()
         ]);
     }
@@ -33,14 +31,11 @@ class ConfigController extends Controller
             'allowed_radius_meters' => 'required|integer|min:1',
             'office_latitude' => 'nullable|string',
             'office_longitude' => 'nullable|string',
-        ]);
-
-        
+        ]);        
         AttendanceConfig::updateOrCreate(
             ['id' => 1],
             $request->all()
         );
-
         return back()->with('success', 'Pengaturan sistem berhasil diperbarui.');
     }
 
@@ -50,9 +45,7 @@ class ConfigController extends Controller
             'date' => 'required|date|unique:holidays,date',
             'description' => 'required|string|max:255',
         ]);
-
         Holiday::create($request->all());
-
         return back()->with('success', 'Hari libur berhasil ditambahkan.');
     }
 

@@ -7,8 +7,6 @@ export default function FilterHeader({ date, onDateChange, onExportClick }) {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                
-                
                 <button 
                     onClick={onExportClick}
                     className="flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-[#064d54] hover:border-[#064d54]/30 px-4 py-2.5 rounded-xl text-sm font-bold shadow-sm transition-all group"
